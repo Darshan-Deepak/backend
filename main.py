@@ -44,6 +44,16 @@ async def get_user( id: schema.User.id, db: Session = Depends(get_database_sessi
     records = db.query(model.User).filter(model.User.id == id).first()
     return {"user":records}
 
+
+@app.post("/register")
+def create_user(user: schema.User, db: Session = Depends(get_database_session)):
+    db_user = model.User(id=user.id,username=user.username,password=user.password,email=user.email,adminoruser=user.adminoruser)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
 # @app.get("/users")
 # async def get_users(request: Request, db: Session = Depends(get_database_session)):
 #     records = db.query(model.Admin).all()
